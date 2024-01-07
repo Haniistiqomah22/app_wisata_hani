@@ -117,7 +117,7 @@ class ApiManager {
 }
 
   Future<String> getToken() async {
-    final token = await storage.read(key: 'kode_rahasia');
+    final token = await storage.read(key: 'auth_token');
     if (token == null) {
       throw Exception('Token is null');
     }
@@ -174,7 +174,7 @@ class ApiManager {
         final jsonResponse = jsonDecode(response.body);
         final token = jsonResponse['token'];
 
-        await storage.write(key: 'kode_rahassia', value: token);
+        await storage.write(key: 'auth_token', value: token);
 
         return token;
       } else {
@@ -187,17 +187,14 @@ class ApiManager {
     }
   }
 
-  Future<String?> addTambahWisata(File gambar, String nama, String deskripsi, String alamat, String harga) async{
-    try {
-    final token = await getToken();
-
+Future<String?> addTambahWisata(File gambar, String nama, String deskripsi, String alamat,  harga) async {
+  try {
     var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/store-gambar'));
-    request.headers['Authorization'] = 'Bearer $token';
     request.fields['nama'] = nama;
     request.files.add(await http.MultipartFile.fromPath('gambar', gambar.path));
     request.fields['deskripsi'] = deskripsi;
     request.fields['alamat'] = alamat;
-    request.fields['harga'] = harga;
+    request.fields['harga'] = harga.toString(); // Ubah tipe data ke String
 
     var response = await request.send();
 
@@ -209,10 +206,10 @@ class ApiManager {
       throw Exception('Failed Status Code: ${response.statusCode}');
     }
   } catch (e) {
-    print('Error in addWisata: $e');
+    print('Error in addTambahWisata: $e');
     throw e;
   }
-  }
+}
 
   Future<List<DetailWisataData>> fetchWisata() async {
   final response = await http.get(Uri.parse('$baseUrl/wisata'));
@@ -225,6 +222,6 @@ class ApiManager {
   }
 }
 
-  void tambahDataWisata(String nama, String gambar, String deskripsi, String alamat, double harga) {}
+  void tambahDataWisata(String nama, String gambar, String deskripsi, String alamat, harga) {}
 
 }
