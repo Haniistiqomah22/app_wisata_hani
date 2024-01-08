@@ -47,6 +47,8 @@ class Login extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: 'Username',
                   prefixIcon: Icon(Icons.person, color: const Color.fromARGB(255, 54, 54, 54)),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.3),
                 ),
               ),
               TextField(
@@ -55,6 +57,8 @@ class Login extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: 'Password',
                   prefixIcon: Icon(Icons.lock, color: const Color.fromARGB(255, 54, 54, 54)),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.2),
                 ),
               ),
               SizedBox(height: 16),

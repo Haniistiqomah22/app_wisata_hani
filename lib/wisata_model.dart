@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 Future<DetailWisataData> fetchDetailWisataData(String nama) async {
   final response = await http.get(
-    Uri.parse('http://10.10.24.10:8000/api/$nama'), // Ganti URL dengan endpoint sesuai kebutuhan
+    Uri.parse('http://192.168.1.7:8000/api/$nama'), // Ganti URL dengan endpoint sesuai kebutuhan
   );
 
   if (response.statusCode == 200) {
@@ -11,6 +11,7 @@ Future<DetailWisataData> fetchDetailWisataData(String nama) async {
     Map<String, dynamic> jsonData = json.decode(response.body);
 
     return DetailWisataData(
+      id: jsonData['id'],
       nama: jsonData['nama'],
       deskripsi: jsonData['deskripsi'],
       alamat: jsonData['alamat'],
@@ -24,6 +25,7 @@ Future<DetailWisataData> fetchDetailWisataData(String nama) async {
 }
 
 class DetailWisataData {
+  final int id;
   final String nama;
   final String deskripsi;
   final String alamat;
@@ -31,6 +33,7 @@ class DetailWisataData {
   final String gambar;
 
   DetailWisataData({
+    required this.id,
     required this.nama,
     required this.deskripsi,
     required this.alamat,
@@ -41,6 +44,7 @@ class DetailWisataData {
   // Menambahkan factory constructor untuk mengonversi dari JSON
   factory DetailWisataData.fromJson(Map<String, dynamic> json) {
     return DetailWisataData(
+      id: json['id'],
       nama: json['nama'],
       deskripsi: json['deskripsi'],
       alamat: json['alamat'],

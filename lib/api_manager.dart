@@ -10,17 +10,17 @@ class ApiManager {
 
   ApiManager({required this.baseUrl});
 
-  Future<String?> addWisata(String nama, File gambar, String deskripsi, String alamat, double harga ) async {
+  Future<String?> addWisata(String nama, String gambar, String deskripsi, String alamat, String harga ) async {
   try {
     final token = await getToken();
 
     var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/store-gambar'));
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['nama'] = nama;
-    request.files.add(await http.MultipartFile.fromPath('gambar', gambar.path));
+    request.fields['gambar'] = gambar;
     request.fields['deskripsi'] = deskripsi;
     request.fields['alamat'] = alamat;
-    request.fields['harga'] = harga as String;
+    request.fields['harga'] = harga;
     
 
     var response = await request.send();
@@ -68,10 +68,10 @@ class ApiManager {
     String alamat,
     String harga,
   ) async {
-    try {
+
       final token = await getToken();
       final response = await http.put(
-        Uri.parse('$baseUrl/Wisata/$id'),
+        Uri.parse('$baseUrl/wisata/$id'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -82,21 +82,13 @@ class ApiManager {
           'deskripsi': deskripsi,
           'alamat': alamat,
           'harga': harga,
-          
         }),
       );
 
-      if (response.statusCode != 200) {
-        throw Exception(
-            'Failed to update tip. Status Code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error in updateWisata : $e');
-      throw e;
-    }
+
   }
 
-  Future<void> deleteWisata(int id) async {
+  Future<int> deleteWisata(int id) async {
   try {
     final token = await getToken();
     final response = await http.delete(
@@ -109,6 +101,8 @@ class ApiManager {
     if (response.statusCode != 200) {
       throw Exception(
           'Gagal menghapus wisata. Kode Status: ${response.statusCode}');
+    } else {
+      return response.statusCode;
     }
   } catch (e) {
     print('Error dalam deletewisata: $e');
@@ -223,5 +217,7 @@ Future<String?> addTambahWisata(File gambar, String nama, String deskripsi, Stri
 }
 
   void tambahDataWisata(String nama, String gambar, String deskripsi, String alamat, harga) {}
+
+  tambahWisata(String nama, String gambar, String deskripsi, String alamat, String harga) {}
 
 }

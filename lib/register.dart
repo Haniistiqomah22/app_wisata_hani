@@ -64,6 +64,8 @@ class RegisterPage extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: 'Password',
                   prefixIcon: Icon(Icons.lock, color: Color.fromARGB(255, 54, 54, 54)),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.3),
                 ),
               ),
               SizedBox(height: 16),

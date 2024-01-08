@@ -1,25 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'api_manager.dart';
+import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class TambahWisataPage extends StatefulWidget {
+class UpdateWisataPage extends StatefulWidget {
+  final Map<String, dynamic> wisataData;
+  final ApiManager apiManager = ApiManager(baseUrl: 'http://192.168.1.7:8000/api');
+
+  UpdateWisataPage({required this.wisataData});
+
   @override
-  _TambahWisataPageState createState() => _TambahWisataPageState();
+  _UpdateWisataPageState createState() => _UpdateWisataPageState();
 }
 
-class _TambahWisataPageState extends State<TambahWisataPage> {
-  final TextEditingController _namaController = TextEditingController();
-  final TextEditingController _gambarController = TextEditingController();
-  final TextEditingController _deskripsiController = TextEditingController();
-  final TextEditingController _alamatController = TextEditingController();
-  final TextEditingController _hargaController = TextEditingController();
+class _UpdateWisataPageState extends State<UpdateWisataPage> {
+  late TextEditingController _idController;
+  late TextEditingController _namaController;
+  late TextEditingController _gambarController;
+  late TextEditingController _deskripsiController;
+  late TextEditingController _alamatController;
+  late TextEditingController _hargaController;
   File? _selectedImage;
 
-  void _tambahWisata(BuildContext context) async {
-    final apimanager = Provider.of<ApiManager>(context, listen: false);
+  @override
+  void initState() {
+    super.initState();
 
+    _idController = TextEditingController(text: widget.wisataData['id'].toString());
+    _namaController = TextEditingController(text: widget.wisataData['nama']);
+    _gambarController = TextEditingController(text: widget.wisataData['gambar']);
+    _deskripsiController = TextEditingController(text: widget.wisataData['deskripsi']);
+
+    _alamatController = TextEditingController(text: widget.wisataData['alamat']);
+    _hargaController = TextEditingController(text: widget.wisataData['harga'].toString());
+  }
+
+  @override
+  void dispose() {
+    _idController.dispose();
+    _namaController.dispose();
+    _gambarController.dispose();
+    _deskripsiController.dispose();
+    _alamatController.dispose();
+    _hargaController.dispose();
+    super.dispose();
+  }
+
+  void _updateWisata(BuildContext context) async {
+    String id = _idController.text;
     String nama = _namaController.text;
     String gambar = _gambarController.text;
     String deskripsi = _deskripsiController.text;
@@ -27,42 +56,43 @@ class _TambahWisataPageState extends State<TambahWisataPage> {
     String harga = _hargaController.text;
 
     if (nama.isEmpty || gambar.isEmpty || deskripsi.isEmpty || alamat.isEmpty || harga.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Semua field harus diisi!'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-    return; // Hentikan eksekusi metode jika ada inputan yang kosong
-  }
-
-    try {
-      await apimanager.addWisata(nama, gambar, deskripsi, alamat, harga);
-
-      Navigator.pushReplacementNamed(context, '/daftar_wisata');
-      // Tampilkan notifikasi bahwa Kost berhasil ditambahkan
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Wisata berhasil ditambahkan!'),
+          content: Text('Semua field harus diisi!'),
           duration: Duration(seconds: 2),
         ),
       );
-      // Navigasi kembali ke halaman sebelumnya atau sesuai kebutuhan aplikasi
-      // Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/daftar_wisata');
-    } catch (e) {
-      print('$e');
-      // Tampilkan notifikasi bahwa terjadi kesalahan
+      return;
+    }
+
+    try {
+      await widget.apiManager.updateWisata(
+        id,
+        nama,
+        gambar,
+        deskripsi,
+        alamat,
+        harga,
+      );
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$e'),
+          content: Text('Wisata berhasil diupdate!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      Navigator.pop(context, true);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Terjadi kesalahan. Coba lagi nanti. $e'),
           duration: Duration(seconds: 2),
         ),
       );
     }
   }
 
-  // Metode untuk memilih gambar dari galeri
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
@@ -79,9 +109,9 @@ class _TambahWisataPageState extends State<TambahWisataPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tambah Wisata', style: TextStyle(color: Colors.white)),
+        title: Text('Update Wisata', style: TextStyle(color: Colors.white)),
         backgroundColor: const Color.fromARGB(255, 66, 163, 243),
-        automaticallyImplyLeading: false,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -102,7 +132,7 @@ class _TambahWisataPageState extends State<TambahWisataPage> {
                   children: [
                     Icon(Icons.image),
                     SizedBox(width: 8.0),
-                    Text('gambar wisata'),
+                    Text('Input Foto Wisata'),
                   ],
                 ),
               ),
@@ -122,32 +152,33 @@ class _TambahWisataPageState extends State<TambahWisataPage> {
                   ),
                 ),
               ),
-            SizedBox(height: 10.0),
             TextField(
               controller: _namaController,
-              decoration: InputDecoration(labelText: 'nama'),
+              decoration: InputDecoration(labelText: 'Nama'),
             ),
-            SizedBox(height: 10.0),
+            Image.network(
+              "${widget.wisataData['gambar']}",
+              height: 100,
+              width: 100,
+            ),
             TextField(
               controller: _deskripsiController,
-              decoration: InputDecoration(labelText: 'deksripsi '),
+              decoration: InputDecoration(labelText: 'Deskripsi'),
             ),
-            SizedBox(height: 10.0),
             TextField(
               controller: _alamatController,
-              decoration: InputDecoration(labelText: 'alamat '),
+              decoration: InputDecoration(labelText: 'Alamat'),
             ),
-            SizedBox(height: 10.0),
             TextField(
               controller: _hargaController,
-              decoration: InputDecoration(labelText: 'Harga '),
+              decoration: InputDecoration(labelText: 'Harga'),
             ),
             SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () async {
-                _tambahWisata(context);
+                _updateWisata(context);
               },
-              child: Text('Tambah Wisata'),
+              child: Text('Update Wisata'),
             ),
           ],
         ),

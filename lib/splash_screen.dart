@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; 
 import 'login.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -11,13 +12,32 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    checkLoginStatus(); // Panggil fungsi untuk memeriksa status login
+  }
+
+  Future<void> checkLoginStatus() async {
     // Delay splash screen for 3 seconds
     Timer(
       Duration(seconds: 3),
-          () => Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Login()), // Ganti NextScreen() dengan widget layar berikutnya
-      ),
+      () async {
+        // Mengecek status login
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+        if (isLoggedIn) {
+          // Jika sudah login, pindah ke NextScreen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => NextScreen()),
+          );
+        } else {
+          // Jika belum login, pindah ke layar login
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Login()),
+          );
+        }
+      },
     );
   }
 
