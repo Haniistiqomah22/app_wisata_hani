@@ -12,7 +12,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final ApiManager apiManager = ApiManager(baseUrl: 'http://192.168.1.7:8000/api');
+  final ApiManager apiManager = ApiManager(baseUrl: 'http://10.10.24.10:8000/api');
 
   //provider digunakan untuk mengirimkan data dari main.dart ke sub page, sehingga semua yang berada pada context provider bisa memanggil datanya.
   //Pada case ini data baseUrl disebar ke page lain

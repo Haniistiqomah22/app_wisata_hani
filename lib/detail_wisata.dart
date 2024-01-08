@@ -139,7 +139,7 @@ class DetailWisataScreen extends StatelessWidget {
                           Future.delayed(Duration(seconds: 2), () {
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => DaftarWisata(apiManager: ApiManager(baseUrl: 'http://192.168.1.7:8000'))),
+                              MaterialPageRoute(builder: (context) => DaftarWisata(apiManager: ApiManager(baseUrl: 'http://10.10.24.10:8000'))),
                             );
                           });
                         }
@@ -187,7 +187,7 @@ class DetailWisataScreen extends StatelessWidget {
                           Future.delayed(Duration(seconds: 2), () {
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => DaftarWisata(apiManager: ApiManager(baseUrl: 'http:/192.168.1.7:8000'))),
+                              MaterialPageRoute(builder: (context) => DaftarWisata(apiManager: ApiManager(baseUrl: 'http:/10.10.24.10:8000'))),
                             );
                           });
 

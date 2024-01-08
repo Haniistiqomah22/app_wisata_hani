@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 Future<DetailWisataData> fetchDetailWisataData(String nama) async {
   final response = await http.get(
-    Uri.parse('http://192.168.1.7:8000/api/$nama'), // Ganti URL dengan endpoint sesuai kebutuhan
+    Uri.parse('http://10.10.24.10:8000/api/$nama'), // Ganti URL dengan endpoint sesuai kebutuhan
   );
 
   if (response.statusCode == 200) {

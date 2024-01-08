@@ -163,7 +163,7 @@ class _DaftarWisataState extends State<DaftarWisata> {
                           allWisata[index].deskripsi,
                           allWisata[index].alamat,
                           allWisata[index].harga,
-                          "http://192.168.1.7:8000/storage/images/${allWisata[index].gambar}",
+                          "http://10.10.24.10:8000/storage/images/${allWisata[index].gambar}",
                         ),
                       );
                     },

@@ -6,7 +6,7 @@ import 'dart:io';
 
 class UpdateWisataPage extends StatefulWidget {
   final Map<String, dynamic> wisataData;
-  final ApiManager apiManager = ApiManager(baseUrl: 'http://192.168.1.7:8000/api');
+  final ApiManager apiManager = ApiManager(baseUrl: 'http://10.10.24.10:8000/api');
 
   UpdateWisataPage({required this.wisataData});
 
