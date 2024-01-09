@@ -1,22 +1,19 @@
 import 'dart:convert';
-import 'dart:js_interop_unsafe';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'tambah_wisata_form.dart';
 import 'wisata_model.dart';
 import 'api_manager.dart';
-import 'update_wisata.dart';
 
-class DaftarWisata extends StatefulWidget {
+class UserScreen extends StatefulWidget {
   final ApiManager apiManager;
 
-  DaftarWisata({required this.apiManager});
+  UserScreen({required this.apiManager});
 
   @override
-  _DaftarWisataState createState() => _DaftarWisataState();
+  _UserScreenState createState() => _UserScreenState();
 }
 
-class _DaftarWisataState extends State<DaftarWisata> {
+class _UserScreenState extends State<UserScreen> {
   late Future<List<DetailWisataData>> _wisata;
 
   @override
@@ -41,30 +38,11 @@ class _DaftarWisataState extends State<DaftarWisata> {
       });
     }
   }
+
   Future<void> _refreshData() async {
-  setState(() {
-    _wisata = widget.apiManager.fetchWisata();
-  });
-}
-
-  void _showAddWisataForm(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return TambahWisataPage();
-      },
-    );
-  }
-
-  void _tambahDataWisata(
-      String nama, String gambar, String deskripsi, String alamat, double harga) {
-    widget.apiManager.tambahDataWisata(
-        nama, gambar, deskripsi, alamat, harga);
-
     setState(() {
       _wisata = widget.apiManager.fetchWisata();
     });
-
   }
 
   @override
@@ -94,7 +72,7 @@ class _DaftarWisataState extends State<DaftarWisata> {
                           'Wisata Populer',
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-          IconButton(
+                        IconButton(
             icon: Icon(Icons.logout),
             onPressed: () {
               // Tambahkan navigasi ke halaman login di sini
@@ -153,7 +131,6 @@ class _DaftarWisataState extends State<DaftarWisata> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => DetailWisataScreen(
-                                id: allWisata[index].id,
                                 nama: allWisata[index].nama,
                                 deskripsi: allWisata[index].deskripsi,
                                 alamat: allWisata[index].alamat,
@@ -164,7 +141,6 @@ class _DaftarWisataState extends State<DaftarWisata> {
                           );
                         },
                         child: buildWisataCard(
-                          allWisata[index].id,
                           allWisata[index].nama,
                           allWisata[index].gambar,
                           allWisata[index].deskripsi,
@@ -175,16 +151,6 @@ class _DaftarWisataState extends State<DaftarWisata> {
                       );
                     },
                   ),
-                  SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: FloatingActionButton(
-                      onPressed: () {
-                        _showAddWisataForm(context);
-                      },
-                      child: Icon(Icons.add),
-                    ),
-                  ),
                 ],
               ),
             );
@@ -194,7 +160,7 @@ class _DaftarWisataState extends State<DaftarWisata> {
     );
   }
 
-  Widget buildWisataCard(int id, String nama, String gambar, String deskripsi, String alamat, int harga, String imagePath) {
+  Widget buildWisataCard(String nama, String gambar, String deskripsi, String alamat, int harga, String imagePath) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Card(
@@ -222,99 +188,13 @@ class _DaftarWisataState extends State<DaftarWisata> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        nama,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit, color: Colors.white),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => UpdateWisataPage(wisataData: {
-                                    'id': id, // Replace with the actual ID of the data
-                                    'nama': nama,
-                                    'gambar': gambar,
-                                    'deskripsi': deskripsi,
-                                    'alamat': alamat,
-                                    'harga': harga,
-                                  }),
-                                ),
-                              ).then((result) {
-                                if (result == true) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Wisata berhasil diupdate!'),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-
-                                  _refreshData();
-                                }
-                              });
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete, color: Colors.white),
-                            onPressed: () async {
-                              bool deleteConfirmed = await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text('Konfirmasi Hapus'),
-                                    content: Text('Apakah Anda yakin ingin menghapus data ini?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(false);
-                                        },
-                                        child: Text('Batal'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                try {
-                                  // Replace 1 with the actual ID of the data to be deleted
-                                  await ApiManager(baseUrl: 'http://10.10.24.11:8000/api').deleteWisata(id);
-                                  print('Delete Wisata: $nama');
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Wisata berhasil dihapus!'),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-
-                                    Navigator.of(context).pop(false);
-                                  Future.delayed(Duration(seconds: 2), () {
-                                    _refreshData();
-                                  });
-
-                                } catch (e) {
-                                  print('Error: $e');
-                                }
-                              
-                                        },
-                                        child: Text('Hapus'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
+                  Text(
+                    nama,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -327,7 +207,6 @@ class _DaftarWisataState extends State<DaftarWisata> {
 }
 
 class DetailWisataScreen extends StatelessWidget {
-  final int id;
   final String nama;
   final String deskripsi;
   final String alamat;
@@ -335,7 +214,6 @@ class DetailWisataScreen extends StatelessWidget {
   final String gambar;
 
   DetailWisataScreen({
-    required this.id,
     required this.nama,
     required this.deskripsi,
     required this.alamat,

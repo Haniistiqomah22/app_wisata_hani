@@ -15,9 +15,36 @@ class Login extends StatelessWidget {
     final password = _passwordController.text;
 
     try {
-      final token = await apiManager.authenticate(username, password);
+      final response = await apiManager.authenticate(username, password);
+      final token = response['token'];
+      final role = response['role'];
       userManager.setAuthToken(token);
+
+      if(role == 'User') {
+         ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login berhasil!'),
+        ),
+      );
+      Navigator.pushReplacementNamed(context, '/user_screen');
+
+      } else  {
+        ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login berhasil!'),
+        ),
+      );
       Navigator.pushReplacementNamed(context, '/daftar_wisata');
+      }
+
+      // Show a toast on successful login
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login berhasil!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
     } catch (e) {
       print('Authentication failed. Error: $e');
       // Handle authentication failure
@@ -45,7 +72,7 @@ class Login extends StatelessWidget {
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
-                  labelText: 'Username',
+                  labelText: 'Email',
                   prefixIcon: Icon(Icons.person, color: const Color.fromARGB(255, 54, 54, 54)),
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.3),

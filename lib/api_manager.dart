@@ -139,7 +139,7 @@ class ApiManager {
     }
   }
 
-  Future<void> login(String email, String password) async {
+  Future<dynamic> login(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/login.php'),
@@ -149,15 +149,20 @@ class ApiManager {
 
       final jsonResponse = jsonDecode(response.body);
       final token = jsonResponse['token'];
+      final role = jsonResponse['role'];
 
       await storage.write(key: 'auth_token', value: token);
+      return {
+        'role': role,
+        'token': token,
+      };
     } catch (e) {
       print('Error in login: $e');
       throw e;
     }
   }
 
-  Future<String?> authenticate(String email, String password) async {
+  Future<dynamic?> authenticate(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
@@ -167,10 +172,14 @@ class ApiManager {
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         final token = jsonResponse['token'];
+        final role = jsonResponse['role'];
 
         await storage.write(key: 'auth_token', value: token);
 
-        return token;
+        return {
+          'token' : token,
+          'role' : role,
+        };
       } else {
         throw Exception(
             'Failed to authenticate. Status Code: ${response.statusCode}');

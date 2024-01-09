@@ -7,24 +7,44 @@ class RegisterPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _register(BuildContext context) async {
-    final apiManager = Provider.of<ApiManager>(context, listen: false);
+void _register(BuildContext context) async {
+  final apiManager = Provider.of<ApiManager>(context, listen: false);
 
-    final name = _nameController.text;
-    final username = _usernameController.text;
-    final password = _passwordController.text;
+  final name = _nameController.text;
+  final username = _usernameController.text;
+  final password = _passwordController.text;
 
-    try {
-      await apiManager.register(name, username, password);
-      // Show a toast on successful registration
+  try {
+    await apiManager.register(name, username, password);
 
-      Navigator.pushReplacementNamed(context, '/');
-      // Handle successful registration
-    } catch (e) {
-      print('Registration failed. Error: $e');
-      // Handle registration failure
+    // Show a toast on successful registration
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Registrasi berhasil!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+    Navigator.pushReplacementNamed(context, '/');
+    // Handle successful registration
+  } catch (e) {
+    // Handle registration failure
+    String errorMessage = 'Terjadi kesalahan saat registrasi';
+    
+    if (e.toString().contains('email sudah terdaftar')) {
+      errorMessage = 'Akun sudah terdaftar';
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(errorMessage),
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+    print('Registration failed. Error: $e');
   }
+}
 
   @override
   Widget build(BuildContext context) {

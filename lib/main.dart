@@ -6,13 +6,14 @@ import 'user_manager.dart';
 import 'login.dart';
 import 'register.dart';
 import 'daftar_wisata.dart';
+import 'user_screen.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final ApiManager apiManager = ApiManager(baseUrl: 'http://10.10.24.10:8000/api');
+  final ApiManager apiManager = ApiManager(baseUrl: 'http://10.10.24.11:8000/api');
 
   //provider digunakan untuk mengirimkan data dari main.dart ke sub page, sehingga semua yang berada pada context provider bisa memanggil datanya.
   //Pada case ini data baseUrl disebar ke page lain
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => Login(),
           '/register': (context) => RegisterPage(),
           '/daftar_wisata': (context) => DaftarWisata(apiManager: apiManager),
+          '/user_screen': (context) => UserScreen(apiManager: apiManager),
         },debugShowCheckedModeBanner: false,
       ),
     );
